@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Market Sentinel</title><style>
+body{margin:0;background:#070b16;color:#f4f6fb;font-family:-apple-system,BlinkMacSystemFont,Arial,sans-serif}.wrap{max-width:520px;margin:auto;padding:18px 14px 40px}
+h1{margin:0;font-size:25px}.sub,.muted{color:#8993a8;font-size:12px}.top,.row{display:flex;justify-content:space-between;align-items:center;gap:10px}.pill{background:#123a29;color:#62e0a1;padding:7px 10px;border-radius:20px;font-size:11px}
+.card{background:#101626;border:1px solid #202a40;border-radius:18px;padding:15px;margin:12px 0}.badge{padding:5px 8px;border-radius:8px;font-size:10px;font-weight:700}.buy{background:#123d2b;color:#58e09b}.wait{background:#3c3215;color:#ffd166}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.box{background:#0b1020;border-radius:11px;padding:10px}.label{font-size:10px;color:#8993a8}.val{margin-top:4px;font-size:14px;font-weight:600}.green{color:#58e09b}.red{color:#ff7181}.btn{width:100%;border:0;border-radius:12px;padding:13px;background:#4f7cff;color:white;font-weight:700;margin-top:12px}.nav{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:15px 0}.nav div{background:#0e1423;border-radius:10px;padding:10px;text-align:center;color:#9aa4b8;font-size:11px}.nav .on{background:#19284a;color:#fff}
+</style></head><body><main class="wrap">
+<div class="top"><div><h1>Market Sentinel</h1><div class="sub">Scanner multi-mercato</div></div><span class="pill">● ONLINE</span></div>
+<div class="nav"><div class="on">Segnali</div><div>Mercati</div><div>Impostazioni</div></div>
+<div id="app"></div>
+<div class="card"><div class="row"><b>Stato scanner</b><span class="muted" id="time">—</span></div><div class="grid"><div class="box"><div class="label">Mercati</div><div class="val">8</div></div><div class="box"><div class="label">Setup</div><div class="val green" id="count">—</div></div><div class="box"><div class="label">Auto trading</div><div class="val">OFF</div></div><div class="box"><div class="label">Modalità</div><div class="val">Alert</div></div></div></div>
+<p class="sub" style="text-align:center;line-height:1.5">Il sito visualizza segnali ricevuti dal motore. Nessun ordine viene inviato automaticamente.</p>
+</main><script>
+async function load(){try{const r=await fetch('/api/signals');const d=await r.json();document.getElementById('count').textContent=d.length;
+document.getElementById('time').textContent=new Date().toLocaleTimeString('it-IT');
+document.getElementById('app').innerHTML=d.map(x=>`<section class="card"><div class="row"><div><b>${x.symbol}</b><div class="sub">${x.timeframe} · ${x.zone}</div></div><span class="badge ${x.direction==='BUY'?'buy':'wait'}">${x.status}</span></div><div class="grid"><div class="box"><div class="label">Zona</div><div class="val">${x.zoneLow} – ${x.zoneHigh}</div></div><div class="box"><div class="label">Test</div><div class="val">${x.tests}</div></div><div class="box"><div class="label">Entry</div><div class="val">${x.entry}</div></div><div class="box"><div class="label">SL</div><div class="val red">${x.sl}</div></div><div class="box"><div class="label">TP</div><div class="val green">${x.tp}</div></div><div class="box"><div class="label">R/R</div><div class="val">${x.rr}</div></div></div><button class="btn" onclick="alert('Segnale ${x.symbol}: ${x.direction}. Ordini automatici disattivati.')">Dettaglio</button></section>`).join('')}catch(e){document.getElementById('app').innerHTML='<div class="card">Server non raggiungibile.</div>'}}load();setInterval(load,15000);
+</script></body></html>
