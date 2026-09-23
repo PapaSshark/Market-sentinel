@@ -83,6 +83,59 @@ label{display:block;color:#9eb0c7;font-size:12px;margin:13px 0 6px}select{width:
     msg.style.display='block';
     setTimeout(()=>msg.style.display='none',2500);
   });
+    const API_URL = "https://market-sentinel-engine.onrender.com/api/signals";
+
+  async function loadSignals(){
+    const status = document.getElementById("scannerStatus");
+    const list = document.getElementById("signalsList");
+
+    try{
+      status.textContent = "Connessione al motore...";
+
+      const response = await fetch(API_URL);
+
+      if(!response.ok){
+        throw new Error("HTTP " + response.status);
+      }
+
+      const data = await response.json();
+
+      list.innerHTML = "";
+
+      data.signals.forEach(signal => {
+        const card = document.createElement("div");
+        card.className = "card";
+
+        if(signal.status === "SIGNAL"){
+          card.innerHTML = `
+            <strong>${signal.symbol} · ${signal.direction}</strong>
+            <p class="muted">Segnale tecnico rilevato</p>
+            <div class="grid">
+              <div class="box"><small>Entry</small><b>${signal.entry}</b></div>
+              <div class="box"><small>Zona</small><b>${signal.zone.low} – ${signal.zone.high}</b></div>
+              <div class="box"><small>SL</small><b>${signal.sl}</b></div>
+              <div class="box"><small>TP</small><b>${signal.tp}</b></div>
+            </div>
+          `;
+        }else{
+          card.innerHTML = `
+            <strong>${signal.symbol} · ${signal.status}</strong>
+            <p class="muted">Prezzo: ${signal.price}</p>
+          `;
+        }
+
+        list.appendChild(card);
+      });
+
+      status.textContent = "Motore online · dati aggiornati";
+
+    }catch(error){
+      console.error(error);
+      status.textContent = "Errore nel collegamento al motore";
+    }
+  }
+
+  loadSignals();
 })();
 </script>
 </body>
