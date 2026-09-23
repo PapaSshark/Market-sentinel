@@ -107,6 +107,29 @@ label{display:block;color:#9eb0c7;font-size:12px;margin:13px 0 6px}select{width:
         card.className = "card";
 
         if(signal.status === "SIGNAL"){
+  const action = signal.direction === "BUY" ? "COMPRA (BUY)" : "VENDI (SELL)";
+
+  card.innerHTML = `
+    <strong>${signal.symbol} · ${action}</strong>
+    <p class="muted">Segnale tecnico rilevato</p>
+    <div class="grid">
+      <div class="box"><small>Entry</small><b>${signal.entry}</b></div>
+      <div class="box"><small>Zona</small><b>${signal.zone.low} – ${signal.zone.high}</b></div>
+      <div class="box"><small>SL</small><b>${signal.sl}</b></div>
+      <div class="box"><small>TP</small><b>${signal.tp}</b></div>
+    </div>
+  `;
+}else if(signal.status === "APPROACH"){
+  card.innerHTML = `
+    <strong>${signal.symbol} · IN AVVICINAMENTO (APPROACH)</strong>
+    <p class="muted">Il prezzo si sta avvicinando alla zona importante.</p>
+  `;
+}else if(signal.status === "WAIT"){
+  card.innerHTML = `
+    <strong>${signal.symbol} · ATTESA (WAIT)</strong>
+    <p class="muted">Il prezzo è ancora lontano dalla zona importante.</p>
+  `;
+}else if(signal.status === "ERROR"){
           card.innerHTML = `
             <strong>${signal.symbol} · ${signal.direction}</strong>
             <p class="muted">Segnale tecnico rilevato</p>
