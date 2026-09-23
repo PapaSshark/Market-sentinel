@@ -117,12 +117,17 @@ label{display:block;color:#9eb0c7;font-size:12px;margin:13px 0 6px}select{width:
               <div class="box"><small>TP</small><b>${signal.tp}</b></div>
             </div>
           `;
-        }else{
-          card.innerHTML = `
-            <strong>${signal.symbol} · ${signal.status}</strong>
-            <p class="muted">Prezzo: ${signal.price}</p>
-          `;
-        }
+        }else if(signal.status === "ERROR"){
+  card.innerHTML = `
+    <strong>${signal.symbol} · ERRORE</strong>
+    <p class="muted">${signal.message || "Dati non disponibili in questo momento."}</p>
+  `;
+}else{
+  card.innerHTML = `
+    <strong>${signal.symbol} · ${signal.status}</strong>
+    <p class="muted">Prezzo: ${signal.price ?? "—"}</p>
+  `;
+}
 
         list.appendChild(card);
       });
