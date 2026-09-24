@@ -527,8 +527,22 @@
     const valueCls =
       valueClass(state);
 
-    const zone =
-      signal.zone || signal.zoneText || "Nessuna zona";
+   let zone = "Nessuna zona";
+
+if (signal.zone) {
+  if (typeof signal.zone === "object") {
+    const low = signal.zone.low;
+    const high = signal.zone.high;
+
+    if (low !== undefined && high !== undefined) {
+      zone = `${formatNumber(low)} — ${formatNumber(high)}`;
+    } else {
+      zone = JSON.stringify(signal.zone);
+    }
+  } else {
+    zone = signal.zone;
+  }
+}
 
     const tests =
       signal.tests ?? signal.zoneTests ?? "—";
