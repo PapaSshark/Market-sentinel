@@ -1,468 +1,800 @@
-<!doctype html>
-
+<!DOCTYPE html>
 <html lang="it">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Market Sentinel</title>
-<style>
-*{box-sizing:border-box}
-body{
-  margin:0;
-  background:#07111f;
-  color:#eef5ff;
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif
-}
-.app{
-  max-width:720px;
-  margin:auto;
-  padding:18px 14px 30px
-}
-.top{
-  display:flex;
-  justify-content:space-between;
-  align-items:center
-}
-h1{
-  margin:0;
-  font-size:26px
-}
-.sub,.muted{
-  color:#91a4bd;
-  font-size:13px
-}
-.status{
-  background:#0b3b2b;
-  color:#55e6a5;
-  padding:7px 10px;
-  border-radius:99px;
-  font-size:12px;
-  font-weight:700
-}
-.nav{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:8px;
-  margin:18px 0
-}
-.nav button{
-  border:0;
-  border-radius:12px;
-  padding:12px 5px;
-  background:#122238;
-  color:#dce8f8;
-  font-weight:700
-}
-.nav button.active{
-  background:#1c4f78;
-  color:#fff
-}
-.page{
-  display:none
-}
-.page.active{
-  display:block
-}
-.card{
-  background:#0d1b2d;
-  border:1px solid #1d3048;
-  border-radius:16px;
-  padding:15px;
-  margin-bottom:12px
-}
-.grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px
-}
-.box{
-  background:#081525;
-  border-radius:12px;
-  padding:11px
-}
-.box small{
-  display:block;
-  color:#8398b2;
-  font-size:11px;
-  margin-bottom:5px
-}
-.green{
-  color:#55e6a5
-}
-.price{
-  font-size:22px;
-  font-weight:800;
-  margin-top:8px;
-  margin-bottom:12px;
-  color:#ffffff
-}
-.price-label{
-  color:#8398b2;
-  font-size:11px;
-  text-transform:uppercase;
-  margin-bottom:3px
-}
-label{
-  display:block;
-  color:#9eb0c7;
-  font-size:12px;
-  margin:13px 0 6px
-}
-select{
-  width:100%;
-  background:#081525;
-  border:1px solid #29405d;
-  color:#fff;
-  border-radius:10px;
-  padding:12px;
-  font-size:15px
-}
-.toggle{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  background:#081525;
-  padding:13px;
-  border-radius:12px;
-  margin-top:10px
-}
-.toggle input{
-  width:20px;
-  height:20px
-}
-.save{
-  width:100%;
-  border:0;
-  border-radius:12px;
-  padding:13px;
-  background:#1c6ea8;
-  color:#fff;
-  font-weight:800;
-  margin-top:13px
-}
-.saved{
-  color:#55e6a5;
-  font-size:12px;
-  margin-top:10px;
-  display:none
-}
-</style>
-</head>
-<body>
-<div class="app">
-<div class="top">
-  <div>
-    <h1>Market Sentinel</h1>
-    <div class="sub">Scanner multi-mercato</div>
-  </div>
-  <div class="status">● ONLINE</div>
-</div>
-<div class="nav">
-  <button type="button" data-page="signals" class="active">Segnali</button>
-  <button type="button" data-page="markets">Mercati</button>
-  <button type="button" data-page="settings">⚙️ Impostazioni</button>
-</div>
-<!-- SEGNALI -->
-<div id="signals" class="page active">
-  <div class="card">
-    <b>Segnali live</b>
-    <p id="scannerStatus" class="muted">
-      Caricamento dati dal motore...
-    </p>
-  </div>
-  <div id="signalsList"></div>
-</div>
-<!-- MERCATI -->
-<div id="markets" class="page">
-  <div class="card">
-<b>Mercati monitorati</b>
-<p class="muted">
-  Tutti i mercati monitorati dal motore.
-</p>
-<div class="grid">
-  <div class="box">EUR/USD</div>
-  <div class="box">GBP/USD</div>
-  <div class="box">USD/JPY</div>
-  <div class="box">AUD/USD</div>
-  <div class="box">USD/CAD</div>
-  <div class="box">NZD/USD</div>
-  <div class="box">EUR/GBP</div>
-  <div class="box">XAU/USD</div>
-</div>
-  </div>
-</div>
-<!-- IMPOSTAZIONI -->
-<div id="settings" class="page">
-  <div class="card">
-<b>⚙️ Impostazioni scanner</b>
-<label for="tests">
-  Test minimi della zona
-</label>
-<select id="tests">
-  <option>2</option>
-  <option selected>3</option>
-  <option>4</option>
-</select>
-<label for="rr">
-  R/R minimo
-</label>
-<select id="rr">
-  <option>1:1.5</option>
-  <option selected>1:2</option>
-  <option>1:3</option>
-</select>
-<label for="risk">
-  Rischio massimo per operazione
-</label>
-<select id="risk">
-  <option>1%</option>
-  <option selected>2%</option>
-  <option>3%</option>
-</select>
-<div class="toggle">
-  <span>
-    <b>🔔 Notifiche</b><br>
-    <span class="muted">
-      Avviso quando arriva un setup
-    </span>
-  </span>
-  <input id="notif" type="checkbox" checked>
-</div>
-<div class="toggle">
-  <span>
-    <b>🤖 Auto Trading</b><br>
-    <span class="muted">
-      Bloccato per ora
-    </span>
-  </span>
-  <input type="checkbox" disabled>
-</div>
-<button type="button" class="save" id="save">
-  Salva impostazioni
-</button>
-<div id="saved" class="saved">
-  ✓ Impostazioni salvate su questo dispositivo
-</div>
-  </div>
-</div>
-</div>
-<script>
-(function(){
-  /* =========================
-     NAVIGAZIONE
-  ========================= */
-  const buttons=document.querySelectorAll('.nav button');
-  const pages=document.querySelectorAll('.page');
-  buttons.forEach(btn=>{
-    btn.addEventListener('click',function(){
-      buttons.forEach(b=>b.classList.remove('active'));
-      pages.forEach(p=>p.classList.remove('active'));
-      btn.classList.add('active');
-      const page=document.getElementById(btn.dataset.page);
-      if(page){
-        page.classList.add('active');
-      }
-    });
-  });
-  /* =========================
-     IMPOSTAZIONI
-  ========================= */
-  const ids=['tests','rr','risk','notif'];
-  try{
-    const saved=JSON.parse(
-      localStorage.getItem('sentinel_settings') || 'null'
-    );
-    if(saved){
-      ids.forEach(id=>{
-        if(saved[id]!==undefined){
-          if(id === 'notif'){
-            document.getElementById(id).checked=!!saved[id];
-          }else{
-            document.getElementById(id).value=saved[id];
-          }
-        }
-      });
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Market Sentinel Engine</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
     }
-  }catch(e){}
-  document.getElementById('save').addEventListener('click',function(){
-    const data={
-      tests:document.getElementById('tests').value,
-      rr:document.getElementById('rr').value,
-      risk:document.getElementById('risk').value,
-      notif:document.getElementById('notif').checked
-    };
-    localStorage.setItem(
-      'sentinel_settings',
-      JSON.stringify(data)
-    );
-    const msg=document.getElementById('saved');
-    msg.style.display='block';
-    setTimeout(()=>{
-      msg.style.display='none';
-    },2500);
-  });
-  /* =========================
-     API
-  ========================= */
-  const API_URL =
-    "https://market-sentinel-engine.onrender.com/api/signals";
-  async function loadSignals(){
-    const status =
-      document.getElementById("scannerStatus");
-    const list =
-      document.getElementById("signalsList");
-    try{
-      status.textContent =
-        "Connessione al motore...";
-      const response =
-        await fetch(API_URL);
-      if(!response.ok){
-        throw new Error("HTTP " + response.status);
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #0b0f14;
+      color: #f4f7fb;
+    }
+
+    .app {
+      min-height: 100vh;
+      padding-bottom: 80px;
+    }
+
+    header {
+      padding: 22px 18px 16px;
+      background: #10161f;
+      border-bottom: 1px solid #202936;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .title {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+
+    .subtitle {
+      color: #8f9baa;
+      font-size: 13px;
+    }
+
+    main {
+      padding: 16px;
+      max-width: 700px;
+      margin: auto;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    button {
+      border: 0;
+      border-radius: 10px;
+      padding: 10px 14px;
+      background: #1d2633;
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    button:active {
+      transform: scale(0.97);
+    }
+
+    .status {
+      margin-bottom: 14px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      background: #111923;
+      color: #aeb8c5;
+      font-size: 13px;
+    }
+
+    .card {
+      background: #111821;
+      border: 1px solid #222c38;
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+
+    .card-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .symbol {
+      font-size: 19px;
+      font-weight: 700;
+    }
+
+    .state {
+      padding: 6px 9px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .buy {
+      background: #123a2a;
+      color: #63e6a0;
+    }
+
+    .sell {
+      background: #421b22;
+      color: #ff8290;
+    }
+
+    .approach {
+      background: #3d3214;
+      color: #f3cf67;
+    }
+
+    .wait {
+      background: #252d37;
+      color: #aeb8c5;
+    }
+
+    .zone-box {
+      background: #0d131b;
+      border-radius: 11px;
+      padding: 12px;
+      margin-bottom: 12px;
+    }
+
+    .zone-title {
+      color: #8f9baa;
+      font-size: 11px;
+      margin-bottom: 5px;
+      text-transform: uppercase;
+    }
+
+    .zone-value {
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+
+    .metric {
+      background: #0d131b;
+      border-radius: 10px;
+      padding: 11px;
+    }
+
+    .metric-label {
+      color: #7f8a98;
+      font-size: 11px;
+      margin-bottom: 5px;
+    }
+
+    .metric-value {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .positive {
+      color: #63e6a0;
+    }
+
+    .negative {
+      color: #ff8290;
+    }
+
+    .neutral {
+      color: #d5dbe2;
+    }
+
+    .empty {
+      text-align: center;
+      padding: 35px 15px;
+      color: #8994a2;
+      background: #111821;
+      border-radius: 14px;
+      border: 1px solid #222c38;
+    }
+
+    .market-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .market {
+      padding: 15px;
+      background: #111821;
+      border: 1px solid #222c38;
+      border-radius: 13px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .market-name {
+      font-weight: 600;
+    }
+
+    .market-type {
+      color: #7f8a98;
+      font-size: 12px;
+    }
+
+    footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 66px;
+      background: #10161f;
+      border-top: 1px solid #202936;
+      display: flex;
+      justify-content: center;
+      z-index: 20;
+    }
+
+    .nav {
+      width: 100%;
+      max-width: 500px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .nav button {
+      background: transparent;
+      border-radius: 0;
+      color: #788492;
+      font-size: 13px;
+    }
+
+    .nav button.active {
+      color: white;
+      background: #151d27;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .error {
+      color: #ff8290;
+    }
+
+    @media (min-width: 700px) {
+      main {
+        padding-top: 25px;
       }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <header>
+    <div class="title">Market Sentinel Engine</div>
+    <div class="subtitle">
+      Scanner automatico di supporti, resistenze e segnali
+    </div>
+  </header>
+
+  <main>
+
+    <!-- SEGNALI -->
+    <section id="signalsPage">
+
+      <div class="topbar">
+        <div class="section-title">Segnali</div>
+        <button id="refreshBtn">↻ Aggiorna</button>
+      </div>
+
+      <div id="status" class="status">
+        Aggiornamento in corso…
+      </div>
+
+      <div id="signalsContainer"></div>
+
+    </section>
+
+
+    <!-- MERCATI -->
+    <section id="marketsPage" class="hidden">
+
+      <div class="section-title" style="margin-bottom:16px;">
+        Mercati monitorati
+      </div>
+
+      <div class="market-list">
+
+        <div class="market">
+          <div>
+            <div class="market-name">EUR/USD</div>
+            <div class="market-type">Forex</div>
+          </div>
+          <div>€</div>
+        </div>
+
+        <div class="market">
+          <div>
+            <div class="market-name">GBP/USD</div>
+            <div class="market-type">Forex</div>
+          </div>
+          <div>£</div>
+        </div>
+
+        <div class="market">
+          <div>
+            <div class="market-name">USD/JPY</div>
+            <div class="market-type">Forex</div>
+          </div>
+          <div>¥</div>
+        </div>
+
+        <div class="market">
+          <div>
+            <div class="market-name">AUD/USD</div>
+            <div class="market-type">Forex</div>
+          </div>
+          <div>A$</div>
+        </div>
+
+        <div class="market">
+          <div>
+            <div class="market-name">USD/CAD</div>
+            <div class="market-type">Forex</div>
+          </div>
+          <div>C$</div>
+        </div>
+
+        <div class="market">
+          <div>
+            <div class="market-name">NZD/USD</div>
+            <div class="market-type">Forex</div>
+          </div>
+          <div>NZ$</div>
+        </div>
+
+        <div class="market">
+          <div>
+            <div class="market-name">EUR/GBP</div>
+            <div class="market-type">Forex</div>
+          </div>
+          <div>€ / £</div>
+        </div>
+
+        <div class="market">
+          <div>
+            <div class="market-name">XAU/USD</div>
+            <div class="market-type">Oro</div>
+          </div>
+          <div>Au</div>
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <!-- NAVIGAZIONE -->
+  <footer>
+    <div class="nav">
+
+      <button id="signalsNav" class="active">
+        📊 Segnali
+      </button>
+
+      <button id="marketsNav">
+        📈 Mercati
+      </button>
+
+    </div>
+  </footer>
+
+</div>
+
+
+<script>
+
+  const API_URL =
+    "https://market-sentinel-engine.onrender.com";
+
+
+  const signalsPage =
+    document.getElementById("signalsPage");
+
+  const marketsPage =
+    document.getElementById("marketsPage");
+
+  const signalsNav =
+    document.getElementById("signalsNav");
+
+  const marketsNav =
+    document.getElementById("marketsNav");
+
+  const refreshBtn =
+    document.getElementById("refreshBtn");
+
+  const signalsContainer =
+    document.getElementById("signalsContainer");
+
+  const statusBox =
+    document.getElementById("status");
+
+
+  function showPage(page) {
+
+    if (page === "signals") {
+
+      signalsPage.classList.remove("hidden");
+      marketsPage.classList.add("hidden");
+
+      signalsNav.classList.add("active");
+      marketsNav.classList.remove("active");
+
+    } else {
+
+      signalsPage.classList.add("hidden");
+      marketsPage.classList.remove("hidden");
+
+      signalsNav.classList.remove("active");
+      marketsNav.classList.add("active");
+
+    }
+
+  }
+
+
+  signalsNav.addEventListener("click", () => {
+    showPage("signals");
+  });
+
+
+  marketsNav.addEventListener("click", () => {
+    showPage("markets");
+  });
+
+
+  function formatNumber(value) {
+
+    if (value === null || value === undefined || value === "") {
+      return "—";
+    }
+
+    const number = Number(value);
+
+    if (!Number.isFinite(number)) {
+      return "—";
+    }
+
+    return number.toFixed(5);
+  }
+
+
+  function formatRR(value) {
+
+    if (value === null || value === undefined) {
+      return "—";
+    }
+
+    return "1:" + Number(value).toFixed(1);
+  }
+
+
+  function stateClass(state) {
+
+    if (state === "BUY") {
+      return "buy";
+    }
+
+    if (state === "SELL") {
+      return "sell";
+    }
+
+    if (state === "IN AVVICINAMENTO") {
+      return "approach";
+    }
+
+    return "wait";
+  }
+
+
+  function valueClass(state) {
+
+    if (state === "BUY") {
+      return "positive";
+    }
+
+    if (state === "SELL") {
+      return "negative";
+    }
+
+    return "neutral";
+  }
+
+
+  function createCard(signal) {
+
+    const state =
+      signal.state || "ATTESA";
+
+    const stateCls =
+      stateClass(state);
+
+    const valueCls =
+      valueClass(state);
+
+    const zone =
+      signal.zone || signal.zoneText || "Nessuna zona";
+
+    const tests =
+      signal.tests ?? signal.zoneTests ?? "—";
+
+    const entry =
+      signal.entry;
+
+    const sl =
+      signal.sl;
+
+    const tp =
+      signal.tp;
+
+    const rr =
+      signal.rr;
+
+
+    return `
+
+      <div class="card">
+
+        <div class="card-head">
+
+          <div class="symbol">
+            ${signal.symbol || "—"}
+          </div>
+
+          <div class="state ${stateCls}">
+            ${state}
+          </div>
+
+        </div>
+
+
+        <div class="zone-box">
+
+          <div class="zone-title">
+            Zona
+          </div>
+
+          <div class="zone-value">
+            ${zone}
+          </div>
+
+        </div>
+
+
+        <div class="grid">
+
+          <div class="metric">
+
+            <div class="metric-label">
+              Test zona
+            </div>
+
+            <div class="metric-value">
+              ${tests}
+            </div>
+
+          </div>
+
+
+          <div class="metric">
+
+            <div class="metric-label">
+              Stato
+            </div>
+
+            <div class="metric-value ${valueCls}">
+              ${state}
+            </div>
+
+          </div>
+
+
+          <div class="metric">
+
+            <div class="metric-label">
+              Entry
+            </div>
+
+            <div class="metric-value">
+              ${entry !== undefined
+                ? formatNumber(entry)
+                : "—"}
+            </div>
+
+          </div>
+
+
+          <div class="metric">
+
+            <div class="metric-label">
+              Stop Loss
+            </div>
+
+            <div class="metric-value negative">
+              ${sl !== undefined
+                ? formatNumber(sl)
+                : "—"}
+            </div>
+
+          </div>
+
+
+          <div class="metric">
+
+            <div class="metric-label">
+              Take Profit
+            </div>
+
+            <div class="metric-value positive">
+              ${tp !== undefined
+                ? formatNumber(tp)
+                : "—"}
+            </div>
+
+          </div>
+
+
+          <div class="metric">
+
+            <div class="metric-label">
+              Risk / Reward
+            </div>
+
+            <div class="metric-value">
+              ${rr !== undefined
+                ? formatRR(rr)
+                : "—"}
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    `;
+
+  }
+
+
+  function renderSignals(data) {
+
+    const signals =
+      Array.isArray(data.signals)
+        ? data.signals
+        : [];
+
+
+    if (!signals.length) {
+
+      signalsContainer.innerHTML = `
+        <div class="empty">
+          Nessun segnale disponibile.
+        </div>
+      `;
+
+      return;
+
+    }
+
+
+    signalsContainer.innerHTML =
+      signals.map(createCard).join("");
+
+  }
+
+
+  async function loadSignals(manual = false) {
+
+    try {
+
+      statusBox.className = "status";
+
+      statusBox.textContent =
+        manual
+          ? "Aggiornamento manuale in corso…"
+          : "Scansione in corso…";
+
+
+      const endpoint =
+        manual
+          ? `${API_URL}/api/refresh`
+          : `${API_URL}/api/signals`;
+
+
+      const response =
+        await fetch(endpoint, {
+          cache: "no-store"
+        });
+
+
+      if (!response.ok) {
+        throw new Error(
+          "Errore HTTP " + response.status
+        );
+      }
+
+
       const data =
         await response.json();
-      list.innerHTML = "";
-      if(!data.signals || !Array.isArray(data.signals)){
-        status.textContent =
-          "Dati non disponibili";
-        return;
-      }
-      data.signals.forEach(signal=>{
-        const card =
-          document.createElement("div");
-        card.className="card";
-        /*
-         * PREZZO REALE
-         */
-        const price =
-          signal.price !== undefined &&
-          signal.price !== null
-            ? signal.price
-            : "—";
-        /*
-         * SEGNALE
-         */
-        if(signal.status === "SIGNAL"){
-          const action =
-            signal.direction === "BUY"
-              ? "COMPRA (BUY)"
-              : "VENDI (SELL)";
-          card.innerHTML = `
-            <strong>
-              ${signal.symbol} · ${action}
-            </strong>
-            <div class="price-label">
-              PREZZO ATTUALE
-            </div>
-            <div class="price">
-              ${price}
-            </div>
-            <p class="muted">
-              Segnale tecnico rilevato
-            </p>
-            <div class="grid">
-              <div class="box">
-                <small>Entry</small>
-                <b>${signal.entry ?? "—"}</b>
-              </div>
-              <div class="box">
-                <small>Zona</small>
-                <b>
-                  ${signal.zone
-                    ? signal.zone.low + " – " + signal.zone.high
-                    : "—"}
-                </b>
-              </div>
-              <div class="box">
-                <small>SL</small>
-                <b>${signal.sl ?? "—"}</b>
-              </div>
-              <div class="box">
-                <small>TP</small>
-                <b>${signal.tp ?? "—"}</b>
-              </div>
-            </div>
-          `;
-        }else if(signal.status === "APPROACH"){
-          card.innerHTML = `
-            <strong>
-              ${signal.symbol} · IN AVVICINAMENTO
-            </strong>
-            <div class="price-label">
-              PREZZO ATTUALE
-            </div>
-            <div class="price">
-              ${price}
-            </div>
-            <p class="muted">
-              Il prezzo si sta avvicinando
-              alla zona importante.
-            </p>
-          `;
-        }else if(signal.status === "WAIT"){
-          card.innerHTML = `
-            <strong>
-              ${signal.symbol} · ATTESA
-            </strong>
-            <div class="price-label">
-              PREZZO ATTUALE
-            </div>
-            <div class="price">
-              ${price}
-            </div>
-            <p class="muted">
-              Il prezzo è ancora lontano
-              dalla zona importante.
-            </p>
-          `;
-        }else if(signal.status === "ERROR"){
-          card.innerHTML = `
-            <strong>
-              ${signal.symbol} · ERRORE
-            </strong>
-            <div class="price-label">
-              PREZZO
-            </div>
-            <div class="price">
-              ${price}
-            </div>
-            <p class="muted">
-              ${signal.message ||
-              "Dati non disponibili in questo momento."}
-            </p>
-          `;
-        }else{
-          card.innerHTML = `
-            <strong>
-              ${signal.symbol} · ${signal.status}
-            </strong>
-            <div class="price-label">
-              PREZZO ATTUALE
-            </div>
-            <div class="price">
-              ${price}
-            </div>
-          `;
-        }
-        list.appendChild(card);
-      });
-      status.textContent =
-        "Motore online · dati aggiornati";
-    }catch(error){
+
+
+      renderSignals(data);
+
+
+      const updateTime =
+        data.updatedAt
+          ? new Date(data.updatedAt)
+          : new Date();
+
+
+      statusBox.textContent =
+        "Online • Ultimo aggiornamento: " +
+        updateTime.toLocaleTimeString("it-IT");
+
+
+    } catch (error) {
+
       console.error(error);
-      status.textContent =
-        "Errore nel collegamento al motore";
+
+
+      statusBox.className =
+        "status error";
+
+
+      statusBox.textContent =
+        "Errore nel collegamento al server.";
+
+
+      signalsContainer.innerHTML = `
+        <div class="empty error">
+          Impossibile caricare i segnali.
+          <br><br>
+          Controlla che il server sia online.
+        </div>
+      `;
+
     }
+
   }
-  /*
-   * CARICAMENTO INIZIALE
-   */
-  loadSignals();
-  /*
-   * AGGIORNAMENTO OGNI 60 SECONDI
-   */
-  setInterval(loadSignals,60000);
-})();
+
+
+  refreshBtn.addEventListener(
+    "click",
+    () => loadSignals(true)
+  );
+
+
+  // SCANSIONE AUTOMATICA ALL'APERTURA
+  loadSignals(false);
+
+
+  // AGGIORNAMENTO OGNI 60 SECONDI
+  setInterval(() => {
+
+    if (!document.hidden) {
+      loadSignals(false);
+    }
+
+  }, 60 * 1000);
+
+
 </script>
+
 </body>
 </html>
